@@ -8,9 +8,21 @@
 <body>
     <div class="original container" data-zoom-container='.firstZoom.container'  >
         <div class="zoomRegion" ></div>
+        <!--canvas height="560" width="51" id="wholeHeatmap" ></canvas-->
         <canvas height="560" width="51" id="wholeHeatmap" ></canvas>
     </div>
+    <!--
     <div class="firstZoom container" >
-        <canvas height="5600" width="510" id="firstZoomedHeatmap"></canvas>
+        <canvas height="1525" width="105" id="firstZoomedHeatmap"></canvas>
     </div>
+    -->
+    <div class="firstZoom container" data-zoom-container='.secondZoom.container'  >
+        <div class="zoomRegion" ></div>
+        <!--canvas height="560" width="51" id="wholeHeatmap" ></canvas-->
+        <canvas height="560" width="51" id="firstZoomedHeatmap" ></canvas>
+    </div>
+    <div class="secondZoom container" >
+        <canvas height="560" width="51" id="secondZoomedHeatmap"></canvas>
+    </div>
+    <div class="chart container"></div>
 </body>

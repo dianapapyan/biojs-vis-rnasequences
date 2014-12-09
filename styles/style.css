@@ -16,7 +16,12 @@ canvas {
 
 .firstZoom.container {
     margin-left: 100px;
-    width: 510px;
+    width: 51px;
+}
+
+.secondZoom.container {
+    margin-left: 100px;
+    width: 51px;
 }
 
 .zoomRegion {
