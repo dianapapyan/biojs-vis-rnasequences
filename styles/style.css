@@ -1,0 +1,31 @@
+canvas {
+    position: absolute;
+    top: 0px;
+}
+
+.container {
+    position: relative;
+
+    display: inline-block;
+    height: 560px;
+    width: 51px;
+
+    margin-top: 10px;
+    overflow-y: hidden;
+}
+
+.firstZoom.container {
+    margin-left: 100px;
+    width: 51px;
+}
+
+.secondZoom.container {
+    margin-left: 100px;
+    width: 51px;
+}
+
+.zoomRegion {
+    width: auto;
+    height: 10%;
+    border: 4px solid;
+}
