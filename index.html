@@ -6,7 +6,7 @@
     <link href="styles/style.css" type="text/css" rel="stylesheet" />
 </head>
 <body>
-    <div class="original container" data-zoom-container='.firstZoom.container' id = "originalContainer" >
+    <div class="original container" id = "originalContainer" >
         <div class="zoomRegion" id = "firstZoomRect"></div>
         <!--canvas height="560" width="51" id="wholeHeatmap" ></canvas-->
         <canvas height="700" width="51" id="wholeHeatmap" ></canvas>
@@ -16,13 +16,16 @@
         <canvas height="1525" width="105" id="firstZoomedHeatmap"></canvas>
     </div>
     -->
-    <div class="firstZoom container" data-zoom-container='.secondZoom.container' id = "firstZoomContainer" >
+    <div class="firstZoom container" id = "firstZoomContainer" >
         <div class="twice zoomRegion" id = "secondZoomRect"></div>
         <!--canvas height="560" width="51" id="wholeHeatmap" ></canvas-->
         <canvas height="700" width="51" id="firstZoomedHeatmap" ></canvas>
     </div>
     <div class="secondZoom container" id = "secondZoomContainer">
         <canvas height="700" width="51" id="secondZoomedHeatmap"></canvas>
+    </div>
+    <div class="text container" id="textContainer">
+    	<canvas height = "700" width = "100" id="textCanvas"></canvas>
     </div>
     <div class="chart container"></div>
 </body>

@@ -37,37 +37,37 @@ $(document).ready(function(e) {
     	var lightnese = 60 * (updatedNumber - maxValue/2)/(maxValue/2);
     	// we format to css value and return
     	return 'hsl(' + hue + ',100%,' + lightnese + '%)'; 
-}
+	}
 
     function drawHeatmap(fileData, zoomRectId, canvasName,start,end) {
 
-	start = Math.round(start);
-	end = Math.round(end);
+		start = Math.round(start);
+		end = Math.round(end);
 	
-    var canvas = document.getElementById(canvasName);
-    var context = canvas.getContext('2d');
-    context.clearRect(0, 0, canvas.width, canvas.height)
-    //context.canvas.width  = window.innerWidth;
-    //context.canvas.height = window.innerHeight;
+    	var canvas = document.getElementById(canvasName);
+    	var context = canvas.getContext('2d');
+    	context.clearRect(0, 0, canvas.width, canvas.height)
+    	//context.canvas.width  = window.innerWidth;
+    	//context.canvas.height = window.innerHeight;
     
-    var heightPixelSize = canvas.height/(end-start);
-    var widthPixelSize = heightPixelSize;
+    	var heightPixelSize = canvas.height/(end-start);
+    	var widthPixelSize = heightPixelSize;
     
-    if (heightPixelSize < 1){
-    	widthPixelSize = heightPixelSize + 1;
-    }
+    	if (heightPixelSize < 1){
+    		widthPixelSize = heightPixelSize + 1;
+    	}
     
-    if (zoomRectId !== ''){
-		var $zoomRect = $('#' + zoomRectId);
-		var borderSize = $zoomRect.css("border-left-width").replace(/[^-\d\.]/g, '');
-		$zoomRect.css("width",  (fileData[1].length * widthPixelSize - 2 * borderSize) + "px");
-	}
+    	if (zoomRectId !== ''){
+			var $zoomRect = $('#' + zoomRectId);
+			var borderSize = $zoomRect.css("border-left-width").replace(/[^-\d\.]/g, '');
+			$zoomRect.css("width",  (fileData[1].length * widthPixelSize - 2 * borderSize) + "px");
+		}
         
-    canvas.width = fileData[1].length * widthPixelSize;
+    	canvas.width = fileData[1].length * widthPixelSize;
 
-    for (var i = start; i < end; i++) {
-            for (var j = 1; j < fileData[i].length; j++) {
-                //context.beginPath();
+    	for (var i = start; i < end; i++) {
+    		for (var j = 1; j < fileData[i].length; j++) {
+    			//context.beginPath();
                /*
                 if (fileData[i][j] < 100) {
                     context.fillStyle = "#00FF00";
@@ -81,18 +81,25 @@ $(document).ready(function(e) {
                 //context.fill();
             }
         }
-/*
-    //$("#canvasImg").elevateZoom({tint:true, tintColour:'#F90', tintOpacity:0.5});
+    }
+        
+    function drawText(fileData, canvasName, start, end) {
+		start = Math.round(start);
+		end = Math.round(end);
+			
+   		var canvas = document.getElementById(canvasName);
+    	var context = canvas.getContext('2d');
+    	context.clearRect(0, 0, canvas.width, canvas.height)
+    	//context.canvas.width  = window.innerWidth;
+    	//context.canvas.height = window.innerHeight;
+    
+    	var heightPixelSize = canvas.height/(end-start);
 
-    //var canvasZoomed = document.getElementById('firstZoomedHeatmap');
-    var canvasZoomed = document.getElementById(scaledCanvas);
-    var contextZoomed = canvasZoomed.getContext('2d');
-    contextZoomed.scale(10,10);
-    contextZoomed.drawImage(canvas, 0, 0);
-
-    */
-
-
+    	for (var i = start; i < end; i++) {	
+    		context.fillStyle = "black";
+  			//context.font = "bold 10px Arial";
+  			context.fillText(fileData[i][0], 0, (i-start) * heightPixelSize);
+        }
     }
 
     var fileData = readTextFile("RNA_seq.txt");
@@ -169,6 +176,7 @@ $(document).ready(function(e) {
     		setInterval(function() {
     			drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
     			drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    			drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     		},70); 
     		
             /*

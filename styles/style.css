@@ -24,6 +24,11 @@ canvas {
     width: 51px;
 }
 
+.text.container {
+    margin-left: 550px;
+    width: 100px;
+}
+
 .zoomRegion {
     width: auto;
     height: 3%;
