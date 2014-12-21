@@ -139,6 +139,7 @@ $(document).ready(function(e) {
     drawHeatmap(fileData, 'firstZoomRect', 'wholeHeatmap', 1, fileData.length);
     drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
     drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     
     $(document).on('mousemove', '.container', function(e) {
         var $container = $(this);
