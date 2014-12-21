@@ -19,25 +19,27 @@ $(document).ready(function(e) {
 
         return newSplitted;
     }
+    
+    function numberToColorHsl(i) {
+    	// red = 0° and green = 120°
+    	// we convert the input to the appropriate hue value
+    	//var hue = (120 * i)/maxValue;
+    	var hue;
+    	var updatedNumber = i; 
+    	if (i >= maxValue/2){
+    		hue = 120;
+    	}
+    	else{
+    		hue = 0;
+    		updatedNumber = maxValue - i;
+    	}
+    
+    	var lightnese = 60 * (updatedNumber - maxValue/2)/(maxValue/2);
+    	// we format to css value and return
+    	return 'hsl(' + hue + ',100%,' + lightnese + '%)'; 
+}
 
-    function toColor(num) {
-        num >>>= 0;
-        var b = num & 0xFF,
-            g = (num & 0xFF00) >>> 8,
-            r = (num & 0xFF0000) >>> 16,
-            a = ( (num & 0xFF000000) >>> 24 ) / 255;
-        return "rgba(" + [r, g, b, a].join(",") + ")";
-    }
-
-    function rgb2hex(rgb) {
-        rgb = rgb.match(/^rgba?[\s+]?\([\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?,[\s+]?(\d+)[\s+]?/i);
-        return (rgb && rgb.length === 4) ? "#" +
-            ("0" + parseInt(rgb[1], 10).toString(16)).slice(-2) +
-            ("0" + parseInt(rgb[2], 10).toString(16)).slice(-2) +
-            ("0" + parseInt(rgb[3], 10).toString(16)).slice(-2) : '';
-    }
-
-    function drawHeatmap(fileData,canvasName,start,end) {
+    function drawHeatmap(fileData, zoomRectId, canvasName,start,end) {
 
 	start = Math.round(start);
 	end = Math.round(end);
@@ -49,20 +51,33 @@ $(document).ready(function(e) {
     //context.canvas.height = window.innerHeight;
     
     var heightPixelSize = canvas.height/(end-start);
+    var widthPixelSize = heightPixelSize;
+    
+    if (heightPixelSize < 1){
+    	widthPixelSize = heightPixelSize + 1;
+    }
+    
+    if (zoomRectId !== ''){
+		var $zoomRect = $('#' + zoomRectId);
+		var borderSize = $zoomRect.css("border-left-width").replace(/[^-\d\.]/g, '');
+		$zoomRect.css("width",  (fileData[1].length * widthPixelSize - 2 * borderSize) + "px");
+	}
+        
+    canvas.width = fileData[1].length * widthPixelSize;
 
     for (var i = start; i < end; i++) {
             for (var j = 1; j < fileData[i].length; j++) {
                 //context.beginPath();
-               
+               /*
                 if (fileData[i][j] < 100) {
                     context.fillStyle = "#00FF00";
                 }
                 else {
                     context.fillStyle = "#FF0000";
                 }
-                //context.fillStyle = rgb2hex(toColor(fileData[i][j]));
-                // context.fillRect(j - 1, (i - 1) * 0.03, 1, 0.03);
-                context.fillRect(j - 1, (i - start) *heightPixelSize, 1, heightPixelSize);
+                */
+                context.fillStyle = numberToColorHsl(fileData[i][j]);
+                context.fillRect((j - 1)* widthPixelSize, (i - start) *heightPixelSize, widthPixelSize, heightPixelSize);
                 //context.fill();
             }
         }
@@ -81,6 +96,22 @@ $(document).ready(function(e) {
     }
 
     var fileData = readTextFile("RNA_seq.txt");
+    
+    var maxValue = fileData[1][1];
+    var minValue = fileData[1][1];
+    for (var i = 1; i < fileData.length; i++) {
+            for (var j = 1; j < fileData[i].length; j++) {
+                if (fileData[i][j] > maxValue){
+                	maxValue = fileData[i][j];
+                }
+                if (fileData[i][j] < minValue){
+                	minValue = fileData[i][j];
+                }
+            }
+        }
+        
+        console.log("maxValue " + maxValue);
+        console.log("minValue " + minValue);
 
     //var zoomRegionAspectRatio = $('.original.container').height()/$('.original.container .zoomRegion').height();
 	
@@ -97,10 +128,10 @@ $(document).ready(function(e) {
 	var secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
 	var secondZoomStartRow = 1
     var secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
-	
-    drawHeatmap(fileData,'wholeHeatmap', 1, fileData.length);
-    drawHeatmap(fileData,'firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
-    drawHeatmap(fileData,'secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+
+    drawHeatmap(fileData, 'firstZoomRect', 'wholeHeatmap', 1, fileData.length);
+    drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
+    drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     
     $(document).on('mousemove', '.container', function(e) {
         var $container = $(this);
@@ -135,8 +166,11 @@ $(document).ready(function(e) {
 			}
     		secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
     		
-    		drawHeatmap(fileData,'firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
-    		drawHeatmap(fileData,'secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    		setInterval(function() {
+    			drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
+    			drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    		},70); 
+    		
             /*
             var zoomMarginTop = (-1)*marginTop*zoomRegionAspectRatio;
             var zoomContainerSelector = $container.data('zoom-container');
@@ -147,23 +181,5 @@ $(document).ready(function(e) {
         
 
     });
-/*
-    $(document).on('mouseover', '.secondZoom.container', function(e) {
-
-        var $container = $(this);
-        var $zoomRegion = $container.find('.zoomRegion');
-        var relY = e.pageY - $container.offset().top;
-        var marginTop = relY-$zoomRegion.height()/2;
-
-        if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$container.height()) {
-            $zoomRegion.css('margin-top', marginTop+'px');
-            var zoomMarginTop = (-1)*marginTop*zoomRegionAspectRatio;
-            var zoomContainerSelector = $container.data('zoom-container');
-            $(zoomContainerSelector).find('canvas').css('margin-top', zoomMarginTop+'px');
-        }
-        
-    });
-
-*/
 
 });
