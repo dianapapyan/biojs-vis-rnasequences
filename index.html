@@ -1,9 +1,24 @@
 <!DOCTYPE html>
 <head>
-    <script type="text/javascript" src='http://code.jquery.com/jquery-latest.js' ></script>
-    <script src="./scripts/d3/d3.min.js"></script>
+    <!--<script type="text/javascript" src='http://code.jquery.com/jquery-latest.js' ></script>-->
+    <script src="./scripts/jquery.js"></script>
     <script type="text/javascript" src='./scripts/script.js' ></script>
     <link href="styles/style.css" type="text/css" rel="stylesheet" />
+    
+    
+    <script src="./scripts/rGraph/RGraph.common.core.js"></script>
+	<script src="./scripts/rGraph/RGraph.common.dynamic.js"></script>   <!-- Just needed for dynamic features -->
+
+	<script src="./scripts/rGraph/RGraph.common.annotate.js"></script>  <!-- Just needed for annotating -->
+	<script src="./scripts/rGraph/RGraph.common.context.js"></script>   <!-- Just needed for context menus -->
+	<script src="./scripts/rGraph/RGraph.common.effects.js"></script>   <!-- Just needed for visual effects -->
+	<script src="./scripts/rGraph/RGraph.common.key.js"></script>       <!-- Just needed for keys -->
+	<script src="./scripts/rGraph/RGraph.common.resizing.js"></script>  <!-- Just needed for resizing -->
+	<script src="./scripts/rGraph/RGraph.common.tooltips.js"></script>  <!-- Just needed for tooltips -->
+	<script src="./scripts/rGraph/RGraph.common.zoom.js"></script>      <!-- Just needed for zoom -->
+
+	<script src="./scripts/rGraph/RGraph.line.js"></script>             <!-- Just needed for Line charts -->
+
 </head>
 <body>
     <div class="original container" id = "originalContainer" >
@@ -27,5 +42,7 @@
     <div class="text container" id="textContainer">
     	<canvas height = "700" width = "100" id="textCanvas"></canvas>
     </div>
-    <div class="chart container"></div>
+    <div class="chart container">
+    	<canvas id="cvs" width="700" height="700">[No canvas support]</canvas>
+    </div>
 </body>

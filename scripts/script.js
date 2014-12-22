@@ -186,9 +186,20 @@ $(document).ready(function(e) {
             $(zoomContainerSelector).find('canvas').css('margin-top', zoomMarginTop+'px');
             */
         }
+ 	});
+ 	
+ 	var data = fileData[1];//[280, 45, 133, 166, 84, 259, 266, 960, 219, 311, 67, 89];
 
-        
-
-    });
+        var lineGraph = new RGraph.Line({
+            id: 'cvs',
+            data: data,
+            options: {
+                labels: fileData[0],
+                title: "Genes",
+                gutter: {
+                    left: 35
+                }
+            }
+        }).draw()
 
 });
