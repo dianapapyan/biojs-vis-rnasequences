@@ -20,23 +20,28 @@ $(document).ready(function(e) {
         return newSplitted;
     }
     
-    function numberToColorHsl(i) {
+    function numberToRGB(i) {
     	// red = 0° and green = 120°
     	// we convert the input to the appropriate hue value
     	//var hue = (120 * i)/maxValue;
-    	var hue;
-    	var updatedNumber = i; 
-    	if (i >= maxValue/2){
-    		hue = 120;
+    	
+    	var normalizer = (maxValue/2)/255;
+    	var red;
+    	var green;
+    	var blue;
+    	
+    	if (i <= maxValue/2){
+    		red = (maxValue/2 - i) /normalizer;
+    		green = 0;
+    		blue = 0;	
     	}
     	else{
-    		hue = 0;
-    		updatedNumber = maxValue - i;
+    		red = 0;
+    		green = 0;
+    		blue = (i - maxValue/2) /normalizer;
     	}
-    
-    	var lightnese = 60 * (updatedNumber - maxValue/2)/(maxValue/2);
     	// we format to css value and return
-    	return 'hsl(' + hue + ',100%,' + lightnese + '%)'; 
+    	return 'rgb(' + red + ',' + green + ',' + blue + ')'; 
 	}
 
     function drawHeatmap(fileData, zoomRectId, canvasName,start,end) {
@@ -76,7 +81,7 @@ $(document).ready(function(e) {
                     context.fillStyle = "#FF0000";
                 }
                 */
-                context.fillStyle = numberToColorHsl(fileData[i][j]);
+                context.fillStyle = numberToRGB(fileData[i][j]);
                 context.fillRect((j - 1)* widthPixelSize, (i - start) *heightPixelSize, widthPixelSize, heightPixelSize);
                 //context.fill();
             }
@@ -196,6 +201,9 @@ $(document).ready(function(e) {
             options: {
                 labels: fileData[0],
                 title: "Genes",
+                text: {
+                	angle:90
+                },
                 gutter: {
                     left: 35
                 }
