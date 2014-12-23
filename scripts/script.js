@@ -179,11 +179,9 @@ $(document).ready(function(e) {
 			}
     		secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
     		
-    		setInterval(function() {
-    			drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
-    			drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
-    			drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
-    		},70); 
+    		drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
+    		drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    		drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     		
             /*
             var zoomMarginTop = (-1)*marginTop*zoomRegionAspectRatio;
@@ -191,7 +189,7 @@ $(document).ready(function(e) {
             $(zoomContainerSelector).find('canvas').css('margin-top', zoomMarginTop+'px');
             */
         }
- 	});
+ 	}.throttle(150));
  	
  	var data = fileData[1];//[280, 45, 133, 166, 84, 259, 266, 960, 219, 311, 67, 89];
 
