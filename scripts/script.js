@@ -21,9 +21,6 @@ $(document).ready(function(e) {
     }
     
     function numberToRGB(i) {
-    	// red = 0° and green = 120°
-    	// we convert the input to the appropriate hue value
-    	//var hue = (120 * i)/maxValue;
     	
     	var normalizer = (maxValue/2)/255;
     	var red;
@@ -31,14 +28,14 @@ $(document).ready(function(e) {
     	var blue;
     	
     	if (i <= maxValue/2){
-    		red = (maxValue/2 - i) /normalizer;
+    		red = Math.round((maxValue/2 - i) /normalizer);
     		green = 0;
     		blue = 0;	
     	}
     	else{
     		red = 0;
     		green = 0;
-    		blue = (i - maxValue/2) /normalizer;
+    		blue = Math.round((i - maxValue/2) /normalizer);
     	}
     	// we format to css value and return
     	return 'rgb(' + red + ',' + green + ',' + blue + ')'; 
