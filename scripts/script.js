@@ -72,18 +72,8 @@ $(document).ready(function(e) {
 
     	for (var i = start; i < end; i++) {
     		for (var j = 1; j < fileData[i].length; j++) {
-    			//context.beginPath();
-               /*
-                if (fileData[i][j] < 100) {
-                    context.fillStyle = "#00FF00";
-                }
-                else {
-                    context.fillStyle = "#FF0000";
-                }
-                */
                 context.fillStyle = numberToRGB(fileData[i][j]);
                 context.fillRect((j - 1)* widthPixelSize, (i - start) *heightPixelSize, widthPixelSize, heightPixelSize);
-                //context.fill();
             }
         }
     }
@@ -121,9 +111,6 @@ $(document).ready(function(e) {
                 }
             }
         }
-        
-        console.log("maxValue " + maxValue);
-        console.log("minValue " + minValue);
 
     //var zoomRegionAspectRatio = $('.original.container').height()/$('.original.container .zoomRegion').height();
 	
@@ -189,7 +176,7 @@ $(document).ready(function(e) {
             $(zoomContainerSelector).find('canvas').css('margin-top', zoomMarginTop+'px');
             */
         }
- 	}.throttle(150));
+ 	}.throttle(200));
  	
  	var data = fileData[1];//[280, 45, 133, 166, 84, 259, 266, 960, 219, 311, 67, 89];
 
@@ -200,10 +187,11 @@ $(document).ready(function(e) {
                 labels: fileData[0],
                 title: "Genes",
                 text: {
-                	angle:90
+                	angle:45,
                 },
                 gutter: {
-                    left: 35
+                    left: 40,
+                    bottom: 70,
                 }
             }
         }).draw()
