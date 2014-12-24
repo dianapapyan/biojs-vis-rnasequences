@@ -176,7 +176,7 @@ $(document).ready(function(e) {
         }
  	}.throttle(200));
  	
- 	console.log("hello");
+ 	
  	
  	var data = fileData[1];//[280, 45, 133, 166, 84, 259, 266, 960, 219, 311, 67, 89];
 
