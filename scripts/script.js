@@ -172,8 +172,11 @@ $(document).ready(function(e) {
             var zoomContainerSelector = $container.data('zoom-container');
             $(zoomContainerSelector).find('canvas').css('margin-top', zoomMarginTop+'px');
             */
+            
         }
  	}.throttle(200));
+ 	
+ 	console.log("hello");
  	
  	var data = fileData[1];//[280, 45, 133, 166, 84, 259, 266, 960, 219, 311, 67, 89];
 
