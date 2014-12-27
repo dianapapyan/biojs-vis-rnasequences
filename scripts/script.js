@@ -1,4 +1,10 @@
 $(document).ready(function(e) {
+	
+	mouseDownTrue = false;
+	
+	function handleDragStart(e) {
+  		this.style.opacity = '1.0';
+	}
 
     function readTextFile(file) {
         var newSplitted = [];
@@ -115,14 +121,14 @@ $(document).ready(function(e) {
 	var originalCanvasRowSizeInPixels = originalCanvas.height/(fileData.length - 1);
 	
 	var firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-	var firstZoomStartRow = 1
+	var firstZoomStartRow = 1;
     var firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
     
     var firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
 	var firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
 	
 	var secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-	var secondZoomStartRow = 1
+	var secondZoomStartRow = 1;
     var secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
 
     drawHeatmap(fileData, 'firstZoomRect', 'wholeHeatmap', 1, fileData.length);
@@ -130,6 +136,60 @@ $(document).ready(function(e) {
     drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     
+    $("body")
+    .mouseup(function(){
+    	mouseDownTrue = false;
+    })
+    
+    $( ".container" )
+  	.mousedown(function() {
+  		console.log("Mouse down");
+  		mouseDownTrue = true;
+  	})
+  	.mousemove(function(e) 
+  	{
+  		if (mouseDownTrue)
+  		{
+    		var $container = $(this);
+        	var $zoomRegion = $container.find('.zoomRegion');
+        	var relY = e.pageY - $container.offset().top;
+        	var marginTop = relY-$zoomRegion.height()/2;
+
+        	if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$container.height()) {
+            	$zoomRegion.css('margin-top', marginTop+'px');
+            	firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
+				if (firstZoomTopMargin/originalCanvasRowSizeInPixels < 1)
+				{
+					firstZoomStartRow = 1;
+				}
+				else
+				{
+					firstZoomStartRow = firstZoomTopMargin/originalCanvasRowSizeInPixels;
+				}
+    			firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
+    		
+    			firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
+    			firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
+    		
+    			secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
+    			if (firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels < 1)
+				{
+					secondZoomStartRow = 1;
+				}
+				else
+				{
+					secondZoomStartRow = firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels;
+				}
+    			secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
+    		
+    			drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
+    			drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    			drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
+            
+        	}
+  		}
+  	});
+    /*
     $(document).on('mousemove', '.container', function(e) {
         var $container = $(this);
         var $zoomRegion = $container.find('.zoomRegion');
@@ -166,17 +226,10 @@ $(document).ready(function(e) {
     		drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
     		drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     		drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
-    		
-            /*
-            var zoomMarginTop = (-1)*marginTop*zoomRegionAspectRatio;
-            var zoomContainerSelector = $container.data('zoom-container');
-            $(zoomContainerSelector).find('canvas').css('margin-top', zoomMarginTop+'px');
-            */
             
         }
  	}.throttle(200));
- 	
- 	console.log("hello");
+ 	*/
  	
  	var data = fileData[1];//[280, 45, 133, 166, 84, 259, 266, 960, 219, 311, 67, 89];
 
