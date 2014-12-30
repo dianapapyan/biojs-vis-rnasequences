@@ -1,11 +1,13 @@
 canvas {
     position: absolute;
+    float:left;
     top: 0px;
     z-index: -1;
 }
 
 .container {
     position: relative;
+    float:left;
 
     display: inline-block;
     height: 700px;
@@ -22,11 +24,6 @@ canvas {
 .secondZoom.container {
     margin-left: 100px;
     width: 51px;
-}
-
-.text.container {
-    margin-left: 550px;
-    width: 100px;
 }
 
 .text.container {

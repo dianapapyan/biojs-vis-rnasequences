@@ -82,8 +82,8 @@ $(document).ready(function(e) {
     }
         
     function drawText(fileData, canvasName, start, end) {
-		start = Math.round(start);
-		end = Math.round(end);
+		var startRow = Math.round(start);
+		var endRow = Math.round(end);
 			
    		var canvas = document.getElementById(canvasName);
     	var context = canvas.getContext('2d');
@@ -91,12 +91,12 @@ $(document).ready(function(e) {
     	//context.canvas.width  = window.innerWidth;
     	//context.canvas.height = window.innerHeight;
     
-    	var heightPixelSize = canvas.height/(end-start);
+    	var heightPixelSize = canvas.height/(endRow-startRow);
 
-    	for (var i = start; i < end; i++) {	
+    	for (var i = startRow; i < endRow; i++) {	
     		context.fillStyle = "black";
   			//context.font = "bold 10px Arial";
-  			context.fillText(fileData[i][0], 0, (i-start) * heightPixelSize);
+  			context.fillText(fileData[i][0], 0, (i-startRow + 1) * heightPixelSize);
         }
     }
 
@@ -143,7 +143,6 @@ $(document).ready(function(e) {
     
     $( ".container" )
   	.mousedown(function() {
-  		console.log("Mouse down");
   		mouseDownTrue = true;
   	})
   	.mousemove(function(e) 
@@ -154,8 +153,10 @@ $(document).ready(function(e) {
         	var $zoomRegion = $container.find('.zoomRegion');
         	var relY = e.pageY - $container.offset().top;
         	var marginTop = relY-$zoomRegion.height()/2;
+        	
+        	var $canvas = $container.children( "canvas" )
 
-        	if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$container.height()) {
+        	if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$canvas.height()) {
             	$zoomRegion.css('margin-top', marginTop+'px');
             	firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
 				if (firstZoomTopMargin/originalCanvasRowSizeInPixels < 1)
@@ -189,47 +190,7 @@ $(document).ready(function(e) {
         	}
   		}
   	}.throttle(50));
-    /*
-    $(document).on('mousemove', '.container', function(e) {
-        var $container = $(this);
-        var $zoomRegion = $container.find('.zoomRegion');
-        var relY = e.pageY - $container.offset().top;
-        var marginTop = relY-$zoomRegion.height()/2;
-
-        if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$container.height()) {
-            $zoomRegion.css('margin-top', marginTop+'px');
-            firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-			if (firstZoomTopMargin/originalCanvasRowSizeInPixels < 1)
-			{
-				firstZoomStartRow = 1;
-			}
-			else
-			{
-				firstZoomStartRow = firstZoomTopMargin/originalCanvasRowSizeInPixels;
-			}
-    		firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
-    		
-    		firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
-    		firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
-    		
-    		secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-    		if (firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels < 1)
-			{
-				secondZoomStartRow = 1;
-			}
-			else
-			{
-				secondZoomStartRow = firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels;
-			}
-    		secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
-    		
-    		drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
-    		drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
-    		drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
-            
-        }
- 	}.throttle(200));
- 	*/
+    
  	
  	var chart = new CanvasJS.Chart("chartContainer",
 		{
@@ -246,10 +207,10 @@ $(document).ready(function(e) {
 				gridColor: "#D7D7D7",      
 	 			tickColor: "#D7D7D7"								
 			},
-                        theme: "theme2",
-                        toolTip:{
-                                shared: true
-                        },
+            theme: "theme2",
+            toolTip:{
+            	shared: true
+            },
 			legend:{
 				verticalAlign: "bottom",
 				horizontalAlign: "center",
