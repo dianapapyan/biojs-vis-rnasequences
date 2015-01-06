@@ -1,10 +1,8 @@
 $(document).ready(function(e) {
 	
 	mouseDownTrue = false;
-	
-	function handleDragStart(e) {
-  		this.style.opacity = '1.0';
-	}
+	secondZoomStartRow = 1;
+	textHeightPixelSize = 1;
 
     function readTextFile(file) {
         var newSplitted = [];
@@ -87,16 +85,16 @@ $(document).ready(function(e) {
 			
    		var canvas = document.getElementById(canvasName);
     	var context = canvas.getContext('2d');
-    	context.clearRect(0, 0, canvas.width, canvas.height)
+    	context.clearRect(0, 0, canvas.width, canvas.height);
     	//context.canvas.width  = window.innerWidth;
     	//context.canvas.height = window.innerHeight;
     
-    	var heightPixelSize = canvas.height/(endRow-startRow);
+    	textHeightPixelSize = canvas.height/(endRow-startRow);
 
     	for (var i = startRow; i < endRow; i++) {	
     		context.fillStyle = "black";
   			//context.font = "bold 10px Arial";
-  			context.fillText(fileData[i][0], 0, (i-startRow + 1) * heightPixelSize);
+  			context.fillText(fileData[i][0], 0, (i-startRow + 1) * textHeightPixelSize);
         }
     }
 
@@ -128,7 +126,7 @@ $(document).ready(function(e) {
 	var firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
 	
 	var secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-	var secondZoomStartRow = 1;
+	secondZoomStartRow = 1;
     var secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
 
     drawHeatmap(fileData, 'firstZoomRect', 'wholeHeatmap', 1, fileData.length);
@@ -136,14 +134,22 @@ $(document).ready(function(e) {
     drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     
-    $("body")
-    .mouseup(function(){
+    $(document).on('mouseup', function(){
     	mouseDownTrue = false;
-    })
+    });
     
     $( ".container" )
-  	.mousedown(function() {
+  	.mousedown(function(e) {
   		mouseDownTrue = true;
+  		
+  		var $container = $(this);
+  		if ($container.attr('id') === 'textContainer')
+  		{
+        	var relY = e.pageY - $container.offset().top;
+			var $canvas = $container.children( "canvas" );
+			var selectedLineNumber = secondZoomStartRow + Math.floor(relY/textHeightPixelSize);
+			alert("number of line " + selectedLineNumber);
+  		}
   	})
   	.mousemove(function(e) 
   	{
@@ -154,7 +160,7 @@ $(document).ready(function(e) {
         	var relY = e.pageY - $container.offset().top;
         	var marginTop = relY-$zoomRegion.height()/2;
         	
-        	var $canvas = $container.children( "canvas" )
+        	var $canvas = $container.children( "canvas" );
 
         	if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$canvas.height()) {
             	$zoomRegion.css('margin-top', marginTop+'px');
@@ -179,7 +185,7 @@ $(document).ready(function(e) {
 				}
 				else
 				{
-					secondZoomStartRow = firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels;
+					secondZoomStartRow = Math.round(firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels);
 				}
     			secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
     		
@@ -189,8 +195,7 @@ $(document).ready(function(e) {
             
         	}
   		}
-  	}.throttle(50));
-    
+  	}.throttle(50));    
  	
  	var chart = new CanvasJS.Chart("chartContainer",
 		{
