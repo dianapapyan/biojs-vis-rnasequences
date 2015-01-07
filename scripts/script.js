@@ -146,6 +146,9 @@ $(document).ready(function(e) {
     //fileData = readTextFile("RNA_seq.txt");
     
     function redrawAllCanvases() {
+    	
+    	$('.original.container .zoomRegion').css('margin-top', '0px');
+        $('.firstZoom.container .twice.zoomRegion').css('margin-top', '0px');
     
     	maxValue = fileData[1][1];
     	minValue = fileData[1][1];
