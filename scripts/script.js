@@ -1,6 +1,7 @@
 $(document).ready(function(e) {
 	
 	mouseDownTrue = false;
+	genesGraphArray = [];
 	secondZoomStartRow = 1;
 	textHeightPixelSize = 1;
 	
@@ -204,7 +205,33 @@ $(document).ready(function(e) {
         	var relY = e.pageY - $container.offset().top;
 			var $canvas = $container.children( "canvas" );
 			var selectedLineNumber = secondZoomStartRow + Math.floor(relY/textHeightPixelSize);
-			alert("number of line " + selectedLineNumber);
+			
+			if ($.inArray( fileData[selectedLineNumber], genesGraphArray) != -1){
+				genesGraphArray = jQuery.grep(genesGraphArray, function(value) {
+  					return value != fileData[selectedLineNumber];
+				});
+				
+				var canvas = document.getElementById('textCanvas');
+    			var context = canvas.getContext('2d');
+    			context.clearRect(0, ((selectedLineNumber - 1) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
+  				
+  				context.fillStyle = "black";
+  				context.fillText(fileData[selectedLineNumber][0], 0, selectedLineNumber * textHeightPixelSize);
+			} 
+			else {
+				genesGraphArray.push(fileData[selectedLineNumber]);
+				//$(this).css({"z-index":"1", "border":"1px solid #000"});
+			
+   				var canvas = document.getElementById('textCanvas');
+    			var context = canvas.getContext('2d');
+    			context.clearRect(0, ((selectedLineNumber - 1) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
+        
+        		context.fillStyle = "yellow";
+  				context.fillRect(0, ((selectedLineNumber - 1) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
+  				
+  				context.fillStyle = "black";
+  				context.fillText(fileData[selectedLineNumber][0], 0, selectedLineNumber * textHeightPixelSize);
+			}
   		}
   	})
   	.mousemove(function(e) 
@@ -251,9 +278,15 @@ $(document).ready(function(e) {
             
         	}
   		}
-  	}.throttle(50));    
- 	
- 	/*
+  	}.throttle(50));
+  	
+  	graphMaxValue = genesGraphArray[0];
+  	graphMinValue = genesGraphArray[0];
+  	for (var i = 0; i < genesGraphArray.length; i++){
+  		
+  	}
+  	  
+
  	var chart = new CanvasJS.Chart("chartContainer",
 		{
 			zoomEnabled: false,
@@ -369,6 +402,5 @@ $(document).ready(function(e) {
         });
 
 		chart.render();
-		*/
 
 });
