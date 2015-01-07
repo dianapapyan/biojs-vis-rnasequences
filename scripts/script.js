@@ -3,7 +3,11 @@ $(document).ready(function(e) {
 	mouseDownTrue = false;
 	secondZoomStartRow = 1;
 	textHeightPixelSize = 1;
-
+	
+	fileData = '';
+	document.getElementById ("btnLoad").addEventListener ("click", handleFileSelect, false);
+	
+	/*
     function readTextFile(file) {
         var newSplitted = [];
         var rawFile = new XMLHttpRequest();
@@ -23,7 +27,48 @@ $(document).ready(function(e) {
 
         return newSplitted;
     }
+    */
     
+    function handleFileSelect()
+            {               
+                if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+                    alert('The File APIs are not fully supported in this browser.');
+                    return;
+                }   
+
+                input = document.getElementById('fileinput');
+                if (!input) {
+                  alert("Um, couldn't find the fileinput element.");
+               }
+               else if (!input.files) {
+                  alert("This browser doesn't seem to support the `files` property of file inputs.");
+               }
+               else if (!input.files[0]) {
+                  alert("Please select a file before clicking 'Load'");               
+               }
+               else {
+                  file = input.files[0];
+                  fr = new FileReader();
+                  fr.onload = receivedText;
+                  fr.readAsText(file);
+                  //fr.readAsDataURL(file);
+               }
+            }
+
+     function receivedText() {           
+        //result = fr.result;
+        //fileData = fr.result;
+        var newSplitted = [];
+        var textArraySplited = fr.result.split("\n");
+        for (var i = 0; i < textArraySplited.length; i++) {
+        	newSplitted[i] = textArraySplited[i].split("\t");
+        }
+        fileData = newSplitted;
+        redrawAllCanvases();
+     	//document.getElementById('editor').appendChild(document.createTextNode(fr.result))
+     }
+            
+     
     function numberToRGB(i) {
     	
     	var normalizer = (maxValue/2)/255;
@@ -98,41 +143,44 @@ $(document).ready(function(e) {
         }
     }
 
-    var fileData = readTextFile("RNA_seq.txt");
+    //fileData = readTextFile("RNA_seq.txt");
     
-    var maxValue = fileData[1][1];
-    var minValue = fileData[1][1];
-    for (var i = 1; i < fileData.length; i++) {
-            for (var j = 1; j < fileData[i].length; j++) {
-                if (fileData[i][j] > maxValue){
-                	maxValue = fileData[i][j];
-                }
-                if (fileData[i][j] < minValue){
-                	minValue = fileData[i][j];
-                }
-            }
+    function redrawAllCanvases() {
+    
+    	maxValue = fileData[1][1];
+    	minValue = fileData[1][1];
+   		for (var i = 1; i < fileData.length; i++) {
+            	for (var j = 1; j < fileData[i].length; j++) {
+                	if (fileData[i][j] > maxValue){
+                		maxValue = fileData[i][j];
+                	}
+                	if (fileData[i][j] < minValue){
+                		minValue = fileData[i][j];
+                	}
+            	}
         }
+        
+        var originalCanvas = document.getElementById('wholeHeatmap');
+		originalCanvasRowSizeInPixels = originalCanvas.height/(fileData.length - 1);
+	
+		var firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
+		var firstZoomStartRow = 1;
+    	var firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
+    
+    	var firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
+		var firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
+	
+		var secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
+		secondZoomStartRow = 1;
+    	var secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
+
+    	drawHeatmap(fileData, 'firstZoomRect', 'wholeHeatmap', 1, fileData.length);
+    	drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
+    	drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+    	drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
+    }
 
     //var zoomRegionAspectRatio = $('.original.container').height()/$('.original.container .zoomRegion').height();
-	
-	var originalCanvas = document.getElementById('wholeHeatmap');
-	var originalCanvasRowSizeInPixels = originalCanvas.height/(fileData.length - 1);
-	
-	var firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-	var firstZoomStartRow = 1;
-    var firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
-    
-    var firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
-	var firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
-	
-	var secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-	secondZoomStartRow = 1;
-    var secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
-
-    drawHeatmap(fileData, 'firstZoomRect', 'wholeHeatmap', 1, fileData.length);
-    drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
-    drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
-    drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     
     $(document).on('mouseup', function(){
     	mouseDownTrue = false;
@@ -197,6 +245,7 @@ $(document).ready(function(e) {
   		}
   	}.throttle(50));    
  	
+ 	/*
  	var chart = new CanvasJS.Chart("chartContainer",
 		{
 			zoomEnabled: false,
@@ -312,5 +361,6 @@ $(document).ready(function(e) {
         });
 
 		chart.render();
+		*/
 
 });

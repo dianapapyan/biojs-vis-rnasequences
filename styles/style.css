@@ -5,6 +5,16 @@ canvas {
     z-index: -1;
 }
 
+#border {
+	display: inline-block;
+	float:left;
+	clear: both;
+	border: 2px solid grey;
+	border-radius: 10px;
+	padding: 5px;
+	margin: 5px;
+}
+
 .container {
     position: relative;
     float:left;
