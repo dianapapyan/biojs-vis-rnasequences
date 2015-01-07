@@ -6,6 +6,7 @@ $(document).ready(function(e) {
 	
 	fileData = '';
 	document.getElementById ("btnLoad").addEventListener ("click", handleFileSelect, false);
+	$( ".content" ).hide();
 	
 	/*
     function readTextFile(file) {
@@ -38,12 +39,15 @@ $(document).ready(function(e) {
 
                 input = document.getElementById('fileinput');
                 if (!input) {
+                	$( ".content" ).hide();  
                   alert("Um, couldn't find the fileinput element.");
                }
                else if (!input.files) {
+               		$( ".content" ).hide();  
                   alert("This browser doesn't seem to support the `files` property of file inputs.");
                }
                else if (!input.files[0]) {
+               		$( ".content" ).hide();  
                   alert("Please select a file before clicking 'Load'");               
                }
                else {
@@ -64,6 +68,7 @@ $(document).ready(function(e) {
         	newSplitted[i] = textArraySplited[i].split("\t");
         }
         fileData = newSplitted;
+        $('.content').css('display', 'inline-block');
         redrawAllCanvases();
      	//document.getElementById('editor').appendChild(document.createTextNode(fr.result))
      }
