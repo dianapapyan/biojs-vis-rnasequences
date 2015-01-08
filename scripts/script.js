@@ -285,16 +285,13 @@ $(document).ready(function(e) {
   	var chart = new CanvasJS.Chart("chartContainer",
 	{
 		zoomEnabled: false,
+      	width: 550,
 		title:{
 			text: "Genes"
 		},
 		axisX:{
-			title: "Genes",
         	labelAngle: 30,
       	},
-		axisY:{
-			title: "Values",						
-		},
         theme: "theme2",
         toolTip:{
             shared: true

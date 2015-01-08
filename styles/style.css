@@ -8,7 +8,6 @@ canvas {
 #border {
 	display: inline-block;
 	float:left;
-	clear: both;
 	border: 2px solid grey;
 	border-radius: 10px;
 	padding: 5px;
@@ -38,13 +37,13 @@ canvas {
 
 .text.container {
     margin-left: 520px;
-    width: 80px;
+    width: 70px;
 }
 
-.chart {
-    width: 100%;
+.chart{
+	display: inline-block;
+	float:left;
 }
-
 
 .zoomRegion {
     width: auto;
