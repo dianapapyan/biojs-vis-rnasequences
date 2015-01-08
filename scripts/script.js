@@ -12,28 +12,6 @@ $(document).ready(function(e) {
 	fileData = '';
 	document.getElementById ("btnLoad").addEventListener ("click", handleFileSelect, false);
 	$( ".content" ).hide();
-	
-	/*
-    function readTextFile(file) {
-        var newSplitted = [];
-        var rawFile = new XMLHttpRequest();
-        rawFile.open("GET", file, false);
-        rawFile.onreadystatechange = function () {
-            if (rawFile.readyState === 4) {
-                if (rawFile.status === 200 || rawFile.status == 0) {
-                    var allText = rawFile.responseText;
-                    var textArraySplited = allText.split("\n");
-                    for (var i = 0; i < textArraySplited.length; i++) {
-                        newSplitted[i] = textArraySplited[i].split("\t");
-                    }
-                }
-            }
-        }
-        rawFile.send(null);
-
-        return newSplitted;
-    }
-    */
     
     function handleFileSelect()
             {               
@@ -60,13 +38,10 @@ $(document).ready(function(e) {
                   fr = new FileReader();
                   fr.onload = receivedText;
                   fr.readAsText(file);
-                  //fr.readAsDataURL(file);
                }
             }
 
-     function receivedText() {           
-        //result = fr.result;
-        //fileData = fr.result;
+     function receivedText() {   
         var newSplitted = [];
         var textArraySplited = fr.result.split("\n");
         for (var i = 0; i < textArraySplited.length; i++) {
@@ -76,7 +51,6 @@ $(document).ready(function(e) {
         $('.content').css('display', 'inline-block');
         redrawAllCanvases();
         chart.render();
-     	//document.getElementById('editor').appendChild(document.createTextNode(fr.result))
      }
             
      
@@ -197,20 +171,10 @@ $(document).ready(function(e) {
     function parseGraphArray(){
     	
 		parseGraphDataArray.length = 0;
-
-    	graphMaxValue = genesGraphArray[0][1];
-  		graphMinValue = genesGraphArray[0][1];
   		
     	for (var i = 0; i < genesGraphArray.length; i++){
     		var parsedDataRow = [];
     		for (var j = 1; j < genesGraphArray[i].length; j++){
-    			if (genesGraphArray[i][j] > graphMaxValue){
-  					graphMaxValue = genesGraphArray[i][j];
-  				}
-  				if (genesGraphArray[i][j] < graphMinValue){
-  					graphMinValue = genesGraphArray[i][j];
-  				}
-
     			parsedDataRow.push( {label:fileData[0][j], y:parseFloat(genesGraphArray[i][j])});
     		}
     		var graphDic = {
@@ -223,8 +187,6 @@ $(document).ready(function(e) {
     		parseGraphDataArray.push(graphDic);
     	}
     }
-
-    //var zoomRegionAspectRatio = $('.original.container').height()/$('.original.container .zoomRegion').height();
     
     $(document).on('mouseup', function(){
     	mouseDownTrue = false;
@@ -331,9 +293,7 @@ $(document).ready(function(e) {
         	labelAngle: 30,
       	},
 		axisY:{
-			title: "Values",
-			maximum: graphMaxValue,
-			interval: (graphMaxValue - graphMinValue)/10,							
+			title: "Values",						
 		},
         theme: "theme2",
         toolTip:{
