@@ -2,6 +2,10 @@ $(document).ready(function(e) {
 	
 	mouseDownTrue = false;
 	genesGraphArray = [];
+	var parseGraphDataArray = [{
+    			type: "line",
+				dataPoints:[],
+    		}];
 	secondZoomStartRow = 1;
 	textHeightPixelSize = 1;
 	
@@ -71,6 +75,7 @@ $(document).ready(function(e) {
         fileData = newSplitted;
         $('.content').css('display', 'inline-block');
         redrawAllCanvases();
+        chart.render();
      	//document.getElementById('editor').appendChild(document.createTextNode(fr.result))
      }
             
@@ -188,6 +193,36 @@ $(document).ready(function(e) {
     	drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     	drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
     }
+    
+    function parseGraphArray(){
+    	
+		parseGraphDataArray.length = 0;
+
+    	graphMaxValue = genesGraphArray[0][1];
+  		graphMinValue = genesGraphArray[0][1];
+  		
+    	for (var i = 0; i < genesGraphArray.length; i++){
+    		var parsedDataRow = [];
+    		for (var j = 1; j < genesGraphArray[i].length; j++){
+    			if (genesGraphArray[i][j] > graphMaxValue){
+  					graphMaxValue = genesGraphArray[i][j];
+  				}
+  				if (genesGraphArray[i][j] < graphMinValue){
+  					graphMinValue = genesGraphArray[i][j];
+  				}
+
+    			parsedDataRow.push( {label:fileData[0][j], y:parseFloat(genesGraphArray[i][j])});
+    		}
+    		var graphDic = {
+    			type: "line",
+				lineThickness:3,
+				showInLegend: true,           
+				name: genesGraphArray[i][0], 
+				dataPoints:parsedDataRow,
+    		};
+    		parseGraphDataArray.push(graphDic);
+    	}
+    }
 
     //var zoomRegionAspectRatio = $('.original.container').height()/$('.original.container .zoomRegion').height();
     
@@ -213,10 +248,10 @@ $(document).ready(function(e) {
 				
 				var canvas = document.getElementById('textCanvas');
     			var context = canvas.getContext('2d');
-    			context.clearRect(0, ((selectedLineNumber - 1) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
+    			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
   				
   				context.fillStyle = "black";
-  				context.fillText(fileData[selectedLineNumber][0], 0, selectedLineNumber * textHeightPixelSize);
+  				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
 			} 
 			else {
 				genesGraphArray.push(fileData[selectedLineNumber]);
@@ -224,14 +259,16 @@ $(document).ready(function(e) {
 			
    				var canvas = document.getElementById('textCanvas');
     			var context = canvas.getContext('2d');
-    			context.clearRect(0, ((selectedLineNumber - 1) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
+    			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
         
         		context.fillStyle = "yellow";
-  				context.fillRect(0, ((selectedLineNumber - 1) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
+  				context.fillRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
   				
   				context.fillStyle = "black";
-  				context.fillText(fileData[selectedLineNumber][0], 0, selectedLineNumber * textHeightPixelSize);
+  				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
 			}
+			parseGraphArray();
+			chart.render();
   		}
   	})
   	.mousemove(function(e) 
@@ -280,127 +317,47 @@ $(document).ready(function(e) {
   		}
   	}.throttle(50));
   	
-  	graphMaxValue = genesGraphArray[0];
-  	graphMinValue = genesGraphArray[0];
-  	for (var i = 0; i < genesGraphArray.length; i++){
+  	graphMaxValue = 100;
+  	graphMinValue = 0;
   		
-  	}
-  	  
-
- 	var chart = new CanvasJS.Chart("chartContainer",
-		{
-			zoomEnabled: false,
-			title:{
-				text: "Genes"
-			},
-			axisY2:{
-				valueFormatString:"0",
-				
-				maximum: 1000,
-				interval: 100,
-				interlacedColor: "#F5F5F5",
-				gridColor: "#D7D7D7",      
-	 			tickColor: "#D7D7D7"								
-			},
-            theme: "theme2",
-            toolTip:{
-            	shared: true
-            },
-			legend:{
-				verticalAlign: "bottom",
-				horizontalAlign: "center",
-				fontSize: 15,
-				fontFamily: "Lucida Sans Unicode"
-
-			},
-			data: [
-			{        
-				type: "line",
-				lineThickness:3,
-				axisYType:"secondary",
-				showInLegend: true,           
-				name: fileData[1][0], 
-				dataPoints: [
-				{ x: new Date(2001, 0), y: 0 },
-				{ x: new Date(2002, 0), y: 0.001 },
-				{ x: new Date(2003, 0), y: 0.01},
-				{ x: new Date(2004, 0), y: 0.05 },
-				{ x: new Date(2005, 0), y: 0.1 },
-				{ x: new Date(2006, 0), y: 0.15 },
-				{ x: new Date(2007, 0), y: 0.22 },
-				{ x: new Date(2008, 0), y: 0.38  },
-				{ x: new Date(2009, 0), y: 0.56 },
-				{ x: new Date(2010, 0), y: 0.77 },
-				{ x: new Date(2011, 0), y: 0.91 },
-				{ x: new Date(2012, 0), y: 0.94 }
-
-
-				]
-			},
-			{        
-				type: "line",
-				lineThickness:3,
-				showInLegend: true,           
-				name: "China",
-				axisYType:"secondary",
-				dataPoints: [
-				{ x: new Date(2001, 00), y: 0.18 },
-				{ x: new Date(2002, 00), y: 0.2 },
-				{ x: new Date(2003, 0), y: 0.25},
-				{ x: new Date(2004, 0), y: 0.35 },
-				{ x: new Date(2005, 0), y: 0.42 },
-				{ x: new Date(2006, 0), y: 0.5 },
-				{ x: new Date(2007, 0), y: 0.58 },
-				{ x: new Date(2008, 0), y: 0.67  },
-				{ x: new Date(2009, 0), y: 0.78},
-				{ x: new Date(2010, 0), y: 0.88 },
-				{ x: new Date(2011, 0), y: 0.98 },
-				{ x: new Date(2012, 0), y: 1.04 }
-
-
-				]
-			},
-			{        
-				type: "line",
-				lineThickness:3,
-				showInLegend: true,           
-				name: "USA",        
-				axisYType:"secondary",
-				dataPoints: [
-				{ x: new Date(2001, 00), y: 0.16 },
-				{ x: new Date(2002, 0), y: 0.17 },
-				{ x: new Date(2003, 0), y: 0.18},
-				{ x: new Date(2004, 0), y: 0.19 },
-				{ x: new Date(2005, 0), y: 0.20 },
-				{ x: new Date(2006, 0), y: 0.23 },
-				{ x: new Date(2007, 0), y: 0.261 },
-				{ x: new Date(2008, 0), y: 0.289  },
-				{ x: new Date(2009, 0), y: 0.3 },
-				{ x: new Date(2010, 0), y: 0.31 },
-				{ x: new Date(2011, 0), y: 0.32 },
-				{ x: new Date(2012, 0), y: 0.33 }
-
-
-				]
-			}
-
-
-
-			],
-          legend: {
-            cursor:"pointer",
-            itemclick : function(e) {
-              if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
-              e.dataSeries.visible = false;
-              }
-              else {
-                e.dataSeries.visible = true;
-              }
-              chart.render();
-            }
+  	var chart = new CanvasJS.Chart("chartContainer",
+	{
+		zoomEnabled: false,
+		title:{
+			text: "Genes"
+		},
+		axisX:{
+			title: "Genes",
+        	labelAngle: 30,
+      	},
+		axisY:{
+			title: "Values",
+			maximum: graphMaxValue,
+			interval: (graphMaxValue - graphMinValue)/10,							
+		},
+        theme: "theme2",
+        toolTip:{
+            shared: true
+        },
+		legend:{
+			verticalAlign: "bottom",
+			horizontalAlign: "center",
+			fontSize: 15,
+			fontFamily: "Lucida Sans Unicode"
+		},
+		data: parseGraphDataArray,
+        legend: {
+           cursor:"pointer",
+           itemclick : function(e) {
+           		if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+              		e.dataSeries.visible = false;
+            	}
+            	else {
+                	e.dataSeries.visible = true;
+            	}
+            	chart.render();
+           }
           }
         });
-
-		chart.render();
 
 });

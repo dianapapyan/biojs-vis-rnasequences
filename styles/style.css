@@ -27,19 +27,24 @@ canvas {
 }
 
 .firstZoom.container {
-    margin-left: 50px;
+    margin-left: 20px;
     width: 51px;
 }
 
 .secondZoom.container {
-    margin-left: 100px;
+    margin-left: 60px;
     width: 51px;
 }
 
 .text.container {
-    margin-left: 550px;
-    width: 100px;
+    margin-left: 520px;
+    width: 80px;
 }
+
+.chart {
+    width: 100%;
+}
+
 
 .zoomRegion {
     width: auto;
