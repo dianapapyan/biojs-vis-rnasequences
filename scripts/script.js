@@ -8,11 +8,47 @@ $(document).ready(function(e) {
     		}];
 	secondZoomStartRow = 1;
 	textHeightPixelSize = 1;
-	
-	fileData = '';
+
+	//add listener to Load button
 	document.getElementById ("btnLoad").addEventListener ("click", handleFileSelect, false);
-	$( ".content" ).hide();
-    
+	
+	/**
+ 	* Parse RNA file
+ 	* @param {String} fileText - Text in the file which should be parsed
+ 	* @returns {String[][]} - Structured matrix from file text
+ 	*/
+	function createMatrixFromText(fileText){
+    	var newSplitted = [];
+        var textArraySplited = fileText.split("\n");
+        for (var i = 0; i < textArraySplited.length; i++) {
+        	newSplitted[i] = textArraySplited[i].split("\t");
+        }
+        return newSplitted;
+    }
+
+	/**
+ 	* Read default file
+ 	* @param {String} file - File name, if needed with the full path
+ 	*/
+	function readTextFile(file) {
+        var parsedText = [];
+        var rawFile = new XMLHttpRequest();
+        rawFile.open("GET", file, false);
+        rawFile.onreadystatechange = function () {
+            if (rawFile.readyState === 4) {
+                if (rawFile.status === 200 || rawFile.status == 0) {
+                	parsedText = createMatrixFromText(rawFile.responseText);
+                }
+            }
+        }
+        rawFile.send(null);
+        
+        fileData = parsedText;
+    }
+ 
+    /**
+ 	* File selection and loading 
+ 	*/
     function handleFileSelect()
             {               
                 if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
@@ -41,19 +77,21 @@ $(document).ready(function(e) {
                }
             }
 
+	/**
+ 	* After selected file is loaded receivedText() function will be called
+ 	*/
      function receivedText() {   
-        var newSplitted = [];
-        var textArraySplited = fr.result.split("\n");
-        for (var i = 0; i < textArraySplited.length; i++) {
-        	newSplitted[i] = textArraySplited[i].split("\t");
-        }
-        fileData = newSplitted;
+        fileData = createMatrixFromText(fr.result);
         $('.content').css('display', 'inline-block');
         redrawAllCanvases();
         chart.render();
      }
             
-     
+    /**
+ 	* Converting number to color 
+ 	* @param {Number} i - Number which should be converted into color
+ 	* @returns {String} - Color in RGB format
+ 	*/
     function numberToRGB(i) {
     	
     	var normalizer = (maxValue/2)/255;
@@ -75,6 +113,14 @@ $(document).ready(function(e) {
     	return 'rgb(' + red + ',' + green + ',' + blue + ')'; 
 	}
 
+	/**
+ 	* General function to draw heatmap
+ 	* @param {String[][]} fileData - Matrix of RNA Sequences
+ 	* @param {String} zoomRectId - html id of the zooming rectangle 
+ 	* @param {String} canvasName - html id of the canvas on which it draw 
+ 	* @param {Number} start - row in file from which it should start drawing
+ 	* @param {Number} end - row in file until which it should draw
+ 	*/
     function drawHeatmap(fileData, zoomRectId, canvasName,start,end) {
 
 		start = Math.round(start);
@@ -316,5 +362,10 @@ $(document).ready(function(e) {
            }
           }
         });
+        
+    //draw default RNA sequence
+	readTextFile("RNA_seq.txt");
+	redrawAllCanvases();
+    chart.render();
 
 });
