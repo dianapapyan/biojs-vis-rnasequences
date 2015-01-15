@@ -140,7 +140,7 @@ $(document).ready(function(e) {
     
     	if (zoomRectId !== ''){
 			var $zoomRect = $('#' + zoomRectId);
-			var borderSize = $zoomRect.css("border-left-width").replace(/[^-\d\.]/g, '');
+			var borderSize = parseInt($zoomRect.css("border-left-width"));
 			$zoomRect.css("width",  (fileData[1].length * widthPixelSize - 2 * borderSize) + "px");
 		}
         
@@ -244,92 +244,90 @@ $(document).ready(function(e) {
     $( ".container" )
   	.mousedown(function(e) {
   		mouseDownTrue = true;
-  		
-  		var $container = $(this);
-  		if ($container.attr('id') === 'textContainer')
-  		{
-        	var relY = e.pageY - $container.offset().top;
-			var $canvas = $container.children( "canvas" );
-			var selectedLineNumber = secondZoomStartRow + Math.floor(relY/textHeightPixelSize);
-			
-			if ($.inArray( fileData[selectedLineNumber], genesGraphArray) != -1){
-				genesGraphArray = jQuery.grep(genesGraphArray, function(value) {
-  					return value != fileData[selectedLineNumber];
-				});
-				
-				var canvas = document.getElementById('textCanvas');
-    			var context = canvas.getContext('2d');
-    			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
-  				
-  				context.fillStyle = "black";
-  				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
-			} 
-			else {
-				genesGraphArray.push(fileData[selectedLineNumber]);
-				//$(this).css({"z-index":"1", "border":"1px solid #000"});
-			
-   				var canvas = document.getElementById('textCanvas');
-    			var context = canvas.getContext('2d');
-    			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
-        
-        		context.fillStyle = "yellow";
-  				context.fillRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
-  				
-  				context.fillStyle = "black";
-  				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
-			}
-			parseGraphArray();
-			chart.render();
-  		}
   	})
-  	.mousemove(function(e) 
-  	{
-  		if (mouseDownTrue)
-  		{
-    		var $container = $(this);
-        	var $zoomRegion = $container.find('.zoomRegion');
-        	var relY = e.pageY - $container.offset().top;
-        	var marginTop = relY-$zoomRegion.height()/2;
-        	
-        	var $canvas = $container.children( "canvas" );
-
-        	if (marginTop > 0 && marginTop+$zoomRegion.outerHeight()<$canvas.height()) {
-            	$zoomRegion.css('margin-top', marginTop+'px');
-            	firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-				if (firstZoomTopMargin/originalCanvasRowSizeInPixels < 1)
-				{
-					firstZoomStartRow = 1;
-				}
-				else
-				{
-					firstZoomStartRow = firstZoomTopMargin/originalCanvasRowSizeInPixels;
-				}
-    			firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
-    		
-    			firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
-    			firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
-    		
-    			secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
-    			if (firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels < 1)
-				{
-					secondZoomStartRow = 1;
-				}
-				else
-				{
-					secondZoomStartRow = Math.round(firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels);
-				}
-    			secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
-    		
-    			drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
-    			drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
-    			drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
-            
-        	}
+  	.mousemove(function(e) {
+  		var $container = $(this);
+  		if (!mouseDownTrue || $container.attr('id') === 'textContainer'){
+  			return;
   		}
-  	}.throttle(50));
-  	
-  	graphMaxValue = 100;
-  	graphMinValue = 0;
+  		
+    	var $container = $(this);
+    	var $canvas = $container.children( "canvas" );
+        var $zoomRegion = $container.find('.zoomRegion');
+        var relY = e.pageY - $container.offset().top;
+        var marginTop = (relY-$zoomRegion.height()/2 < 0) ? 0 : relY-$zoomRegion.height()/2;
+        marginTop = (marginTop+$zoomRegion.outerHeight()<=$canvas.height()) ? marginTop : $canvas.height() - $zoomRegion.outerHeight();
+        
+        $zoomRegion.css('margin-top', marginTop+'px');
+        firstZoomTopMargin = parseInt($('.original.container .zoomRegion').css('margin-top'));
+		if (firstZoomTopMargin/originalCanvasRowSizeInPixels < 1)
+		{
+			firstZoomStartRow = 1;
+		}
+		else
+		{
+			firstZoomStartRow = firstZoomTopMargin/originalCanvasRowSizeInPixels;
+		}
+  			firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
+  		
+  			firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
+  			firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
+  		
+  			secondZoomTopMargin = parseInt($('.firstZoom.container .zoomRegion').css('margin-top'));
+  			if (firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels < 1)
+		{
+			secondZoomStartRow = 1;
+		}
+		else
+		{
+			secondZoomStartRow = Math.round(firstZoomStartRow + secondZoomTopMargin/firstCanvasRowSizeInPixels);
+		}
+  			secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
+  		
+  			drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
+  			drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
+  			drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
+
+  	}.throttle(50))
+  	.click(function(e){
+  		var $container = $(this);
+  		if ($container.attr('id') !== 'textContainer'){
+  			return;
+  		}
+  		
+       	var relY = e.pageY - $container.offset().top;
+		var $canvas = $container.children( "canvas" );
+		var selectedLineNumber = secondZoomStartRow + Math.floor(relY/textHeightPixelSize);
+		
+		if ($.inArray( fileData[selectedLineNumber], genesGraphArray) != -1){
+			genesGraphArray = jQuery.grep(genesGraphArray, function(value) {
+ 					return value != fileData[selectedLineNumber];
+			});
+			
+			var canvas = document.getElementById('textCanvas');
+   			var context = canvas.getContext('2d');
+   			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
+ 				
+ 				context.fillStyle = "black";
+ 				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
+		} 
+		else {
+			genesGraphArray.push(fileData[selectedLineNumber]);
+			//$(this).css({"z-index":"1", "border":"1px solid #000"});
+		
+  				var canvas = document.getElementById('textCanvas');
+   			var context = canvas.getContext('2d');
+   			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
+       
+       		context.fillStyle = "yellow";
+ 				context.fillRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
+ 				
+ 				context.fillStyle = "black";
+ 				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
+		}
+		parseGraphArray();
+		chart.render();
+  	});
   		
   	var chart = new CanvasJS.Chart("chartContainer",
 	{
