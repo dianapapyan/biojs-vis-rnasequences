@@ -1,3 +1,7 @@
+body{
+	margin: 0px;
+}
+
 canvas {
     position: absolute;
     top: 0px;
@@ -34,7 +38,7 @@ canvas {
 }
 
 .chart{
-	//display: inline-block;
+	display: inline-block;
 	//float:left;
 }
 

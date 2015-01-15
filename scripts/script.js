@@ -197,14 +197,14 @@ $(document).ready(function(e) {
         var originalCanvas = document.getElementById('wholeHeatmap');
 		originalCanvasRowSizeInPixels = originalCanvas.height/(fileData.length - 1);
 	
-		var firstZoomTopMargin = $('.original.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
+		var firstZoomTopMargin = parseInt($('.original.container .zoomRegion').css('margin-top'));
 		var firstZoomStartRow = 1;
     	var firstZoomLastRow = firstZoomStartRow + $('.original.container .zoomRegion').height()/originalCanvasRowSizeInPixels;
     
     	var firstZoomedCanvas = document.getElementById('firstZoomedHeatmap');
 		var firstCanvasRowSizeInPixels = firstZoomedCanvas.height/(firstZoomLastRow - firstZoomStartRow);
 	
-		var secondZoomTopMargin = $('.firstZoom.container .zoomRegion').css('margin-top').replace(/[^-\d\.]/g, '');
+		var secondZoomTopMargin = parseInt($('.firstZoom.container .zoomRegion').css('margin-top'));
 		secondZoomStartRow = 1;
     	var secondZoomLastRow = secondZoomStartRow + $('.firstZoom.container .zoomRegion').height()/firstCanvasRowSizeInPixels;
 
@@ -212,6 +212,8 @@ $(document).ready(function(e) {
     	drawHeatmap(fileData, 'secondZoomRect','firstZoomedHeatmap', firstZoomStartRow, firstZoomLastRow);
     	drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     	drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
+
+    	$("#chartContainer").css('width', $(window).outerWidth() - $(".content").outerWidth(true) + 'px');
     }
     
     function parseGraphArray(){
@@ -332,7 +334,6 @@ $(document).ready(function(e) {
   	var chart = new CanvasJS.Chart("chartContainer",
 	{
 		zoomEnabled: false,
-      	width: 550,
 		title:{
 			text: "Genes"
 		},
