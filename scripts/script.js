@@ -168,9 +168,13 @@ $(document).ready(function(e) {
     	textHeightPixelSize = canvas.height/(endRow-startRow);
 
     	for (var i = startRow; i < endRow; i++) {	
+    		if ($.inArray(fileData[i], genesGraphArray) != -1){
+    			context.fillStyle = "yellow";
+    			context.fillRect(0, ((i - startRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
+    		}
     		context.fillStyle = "black";
+    		context.fillText(fileData[i][0], 0, (i-startRow + 1) * textHeightPixelSize);
   			//context.font = "bold 10px Arial";
-  			context.fillText(fileData[i][0], 0, (i-startRow + 1) * textHeightPixelSize);
         }
     }
 
@@ -213,7 +217,7 @@ $(document).ready(function(e) {
     	drawHeatmap(fileData, '','secondZoomedHeatmap', secondZoomStartRow, secondZoomLastRow);
     	drawText(fileData, 'textCanvas', secondZoomStartRow, secondZoomLastRow);
 
-    	$("#chartContainer").css('width', $(window).outerWidth() - $(".content").outerWidth(true) + 'px');
+    	$("#chartContainer").css('width', $(window).outerWidth() - $("#leftWrapper").outerWidth(true) + 'px');
     }
     
     function parseGraphArray(){
@@ -308,22 +312,22 @@ $(document).ready(function(e) {
    			var context = canvas.getContext('2d');
    			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
  				
- 				context.fillStyle = "black";
- 				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
+ 			context.fillStyle = "black";
+ 			context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
 		} 
 		else {
 			genesGraphArray.push(fileData[selectedLineNumber]);
 			//$(this).css({"z-index":"1", "border":"1px solid #000"});
 		
-  				var canvas = document.getElementById('textCanvas');
+  			var canvas = document.getElementById('textCanvas');
    			var context = canvas.getContext('2d');
    			context.clearRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize);
        
        		context.fillStyle = "yellow";
- 				context.fillRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
+ 			context.fillRect(0, ((selectedLineNumber - secondZoomStartRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
  				
- 				context.fillStyle = "black";
- 				context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
+ 			context.fillStyle = "black";
+ 			context.fillText(fileData[selectedLineNumber][0], 0, (selectedLineNumber - secondZoomStartRow + 1) * textHeightPixelSize);
 		}
 		parseGraphArray();
 		chart.render();
