@@ -43,8 +43,7 @@ $(document).ready(function(e) {
         }
         rawFile.send(null);
         
-        fileData = parsedText;
-    }
+        fileData = parsedText;    }
  
     /**
  	* File selection and loading 
@@ -227,7 +226,7 @@ $(document).ready(function(e) {
     			type: "line",
 				lineThickness:3,
 				showInLegend: true,           
-				name: genesGraphArray[i][0], 
+				name: genesGraphArray[i][0],
 				dataPoints:parsedDataRow,
     		};
     		parseGraphDataArray.push(graphDic);
@@ -335,8 +334,12 @@ $(document).ready(function(e) {
 		title:{
 			text: "Genes"
 		},
+		exportEnabled: true,
 		axisX:{
+			title: "Conditions",
         	labelAngle: 30,
+        	labelFontSize: 10,
+        	interval: 1,
       	},
         theme: "theme2",
         toolTip:{
@@ -362,7 +365,7 @@ $(document).ready(function(e) {
            }
           }
         });
-        
+       
     //draw default RNA sequence
 	readTextFile("RNA_seq.txt");
 	redrawAllCanvases();

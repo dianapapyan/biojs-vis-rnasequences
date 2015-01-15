@@ -41,8 +41,8 @@ canvas {
 }
 
 .chart{
-	display: inline-block;
-	float:left;
+	//display: inline-block;
+	//float:left;
 }
 
 .zoomRegion {
