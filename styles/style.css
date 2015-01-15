@@ -1,6 +1,5 @@
 canvas {
     position: absolute;
-    float:left;
     top: 0px;
     z-index: -1;
 }
@@ -20,23 +19,17 @@ canvas {
 
     display: inline-block;
     height: 700px;
-    width: 51px;
 
     margin-top: 10px;
 }
 
-.firstZoom.container {
-    margin-left: 20px;
-    width: 51px;
-}
-
+.firstZoom.container,
 .secondZoom.container {
-    margin-left: 60px;
-    width: 51px;
+    margin-left: 10px;
 }
 
 .text.container {
-    margin-left: 520px;
+    margin-left: 10px;
     width: 70px;
 }
 

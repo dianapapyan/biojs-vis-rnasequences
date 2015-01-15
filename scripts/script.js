@@ -145,6 +145,7 @@ $(document).ready(function(e) {
 		}
         
     	canvas.width = fileData[1].length * widthPixelSize;
+    	$(canvas.parentNode).css('width', canvas.width + 'px');
 
     	for (var i = start; i < end; i++) {
     		for (var j = 1; j < fileData[i].length; j++) {
@@ -225,6 +226,7 @@ $(document).ready(function(e) {
     		var graphDic = {
     			type: "line",
 				lineThickness:3,
+				markerType: "circle",
 				showInLegend: true,           
 				name: genesGraphArray[i][0],
 				dataPoints:parsedDataRow,
@@ -341,7 +343,6 @@ $(document).ready(function(e) {
         	labelFontSize: 10,
         	interval: 1,
       	},
-        theme: "theme2",
         toolTip:{
             shared: true
         },
