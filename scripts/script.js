@@ -8,6 +8,8 @@ $(document).ready(function(e) {
     		}];
 	secondZoomStartRow = 1;
 	textHeightPixelSize = 1;
+	supportedFileTypes = ['txt', 'soft'];
+	datasetStartIdentifier = '!dataset_table_begin';
 
 	//add listener to Load button
 	document.getElementById ("btnLoad").addEventListener ("click", handleFileSelect, false);
@@ -19,9 +21,36 @@ $(document).ready(function(e) {
  	*/
 	function createMatrixFromText(fileText){
     	var newSplitted = [];
+    	///clear chart
+    	genesGraphArray.length = 0;
+    	
+        
         var textArraySplited = fileText.split("\n");
-        for (var i = 0; i < textArraySplited.length; i++) {
-        	newSplitted[i] = textArraySplited[i].split("\t");
+        if (extension === 'txt') {
+        	for (var i = 0; i < textArraySplited.length; i++) {
+        		newSplitted[i] = textArraySplited[i].split("\t");
+        	}
+        }
+        else {
+        	var startIndex = textArraySplited.indexOf(datasetStartIdentifier);
+        	if (startIndex > -1) {
+        		textArraySplited.splice(0, startIndex + 1);
+        	}
+        	var geneTitleLabelIndex = textArraySplited[0].indexOf('Gene title');
+        	var genebankAccessionLabelIndex = textArraySplited[0].indexOf('GenBank Accession');
+        	
+        	for (var i = 0; i < textArraySplited.length; i++){
+        		newSplitted[i] = textArraySplited[i].split("\t");
+        	}
+        	var geneTitleLabelIndex = newSplitted[0].indexOf('Gene title');
+        	var genebankAccessionLabelIndex = newSplitted[0].indexOf('GenBank Accession');
+        	
+        	for (var i = 0; i < newSplitted.length; i++){
+        		newSplitted[i][0] = newSplitted[i][genebankAccessionLabelIndex];
+        		newSplitted[i].splice(1, 1);
+        		newSplitted[i].splice(geneTitleLabelIndex - 1, newSplitted[i].length - geneTitleLabelIndex + 1);
+        	}
+        	
         }
         return newSplitted;
     }
@@ -31,6 +60,7 @@ $(document).ready(function(e) {
  	* @param {String} file - File name, if needed with the full path
  	*/
 	function readTextFile(file) {
+		extension = 'txt';
         var parsedText = [];
         var rawFile = new XMLHttpRequest();
         rawFile.open("GET", file, false);
@@ -43,46 +73,60 @@ $(document).ready(function(e) {
         }
         rawFile.send(null);
         
-        fileData = parsedText;    }
+        fileData = parsedText;   
+        //draw everything
+        $('.content').show();
+        redrawAllCanvases();
+        parseGraphArray();
+        chart.render(); 
+    }
  
     /**
  	* File selection and loading 
  	*/
-    function handleFileSelect()
-            {               
-                if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
-                    alert('The File APIs are not fully supported in this browser.');
-                    return;
-                }   
-
-                input = document.getElementById('fileinput');
-                if (!input) {
-                	$( ".content" ).hide();  
-                  alert("Um, couldn't find the fileinput element.");
-               }
-               else if (!input.files) {
-               		$( ".content" ).hide();  
-                  alert("This browser doesn't seem to support the `files` property of file inputs.");
-               }
-               else if (!input.files[0]) {
-               		$( ".content" ).hide();  
-                  alert("Please select a file before clicking 'Load'");               
-               }
-               else {
-                  file = input.files[0];
-                  fr = new FileReader();
-                  fr.onload = receivedText;
-                  fr.readAsText(file);
-               }
-            }
+    function handleFileSelect(){
+    	if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
+    		alert('The File APIs are not fully supported in this browser.');
+    		return;
+    	}
+    	
+    	input = document.getElementById('fileinput');
+        if (!input) {
+        	$( ".content" ).hide();  
+        	alert("Um, couldn't find the fileinput element.");
+        }
+        else if (!input.files) {
+        	$( ".content" ).hide();
+        	alert("This browser doesn't seem to support the `files` property of file inputs.");
+        }
+        else if (!input.files[0]) {
+        	$( ".content" ).hide();
+        	alert("Please select a file before clicking 'Load'");
+        }
+        else {
+        	extension = input.files[0].name.split('.').pop().toLowerCase();  //file extension from input file
+        	var isSuccess = supportedFileTypes.indexOf(extension) > -1;
+        	if (isSuccess)
+        	{
+        		file = input.files[0];
+            	fr = new FileReader();
+           		fr.onload = receivedText;
+            	fr.readAsText(file);
+        	}
+        	else{
+        		alert("Chosen file format is not supported. Please choose different file.")
+        	}	
+        }
+    }
 
 	/**
  	* After selected file is loaded receivedText() function will be called
  	*/
-     function receivedText() {   
+     function receivedText() {
         fileData = createMatrixFromText(fr.result);
-        $('.content').css('display', 'inline-block');
+        $('.content').show();
         redrawAllCanvases();
+        parseGraphArray();
         chart.render();
      }
             
