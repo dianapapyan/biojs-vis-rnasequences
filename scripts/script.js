@@ -10,6 +10,7 @@ $(document).ready(function(e) {
 	textHeightPixelSize = 1;
 	supportedFileTypes = ['txt', 'soft'];
 	datasetStartIdentifier = '!dataset_table_begin';
+	datasetEndIdentifier = '!dataset_table_end';
 
 	//add listener to Load button
 	document.getElementById ("btnLoad").addEventListener ("click", handleFileSelect, false);
@@ -30,14 +31,16 @@ $(document).ready(function(e) {
         	for (var i = 0; i < textArraySplited.length; i++) {
         		newSplitted[i] = textArraySplited[i].split("\t");
         	}
+        	newSplitted[0].splice(0,0,'Gene name');
         }
         else {
         	var startIndex = textArraySplited.indexOf(datasetStartIdentifier);
+        	var endIndex = textArraySplited.indexOf(datasetEndIdentifier);
         	if (startIndex > -1) {
         		textArraySplited.splice(0, startIndex + 1);
         	}
-        	var geneTitleLabelIndex = textArraySplited[0].indexOf('Gene title');
-        	var genebankAccessionLabelIndex = textArraySplited[0].indexOf('GenBank Accession');
+        	
+        	textArraySplited.splice(endIndex, 1);
         	
         	for (var i = 0; i < textArraySplited.length; i++){
         		newSplitted[i] = textArraySplited[i].split("\t");
@@ -46,11 +49,16 @@ $(document).ready(function(e) {
         	var genebankAccessionLabelIndex = newSplitted[0].indexOf('GenBank Accession');
         	
         	for (var i = 0; i < newSplitted.length; i++){
-        		newSplitted[i][0] = newSplitted[i][genebankAccessionLabelIndex];
-        		newSplitted[i].splice(1, 1);
-        		newSplitted[i].splice(geneTitleLabelIndex - 1, newSplitted[i].length - geneTitleLabelIndex + 1);
+        		if (newSplitted[i][genebankAccessionLabelIndex] === ''){
+        			newSplitted.splice(i, 1);
+        			i = i-1;
+        		}
+        		else{
+        			newSplitted[i][0] = newSplitted[i][genebankAccessionLabelIndex];
+        			newSplitted[i].splice(1, 1);
+        			newSplitted[i].splice(geneTitleLabelIndex - 1, newSplitted[i].length - geneTitleLabelIndex + 1);
+        		}
         	}
-        	
         }
         return newSplitted;
     }
@@ -149,8 +157,8 @@ $(document).ready(function(e) {
     	}
     	else{
     		red = 0;
-    		green = 0;
-    		blue = Math.round((i - maxValue/2) /normalizer);
+    		green = Math.round((i - maxValue/2) /normalizer);;
+    		blue = 0;
     	}
     	// we format to css value and return
     	return 'rgb(' + red + ',' + green + ',' + blue + ')'; 
