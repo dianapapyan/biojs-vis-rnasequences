@@ -222,10 +222,11 @@ $(document).ready(function(e) {
     	for (var i = startRow; i < endRow; i++) {	
     		if ($.inArray(fileData[i], genesGraphArray) != -1){
     			context.fillStyle = "yellow";
-    			context.fillRect(0, ((i - startRow) * textHeightPixelSize) + 1, canvas.width, textHeightPixelSize - 1);
+    			context.fillRect(0, ((i - startRow) * textHeightPixelSize), canvas.width, textHeightPixelSize - ((i - startRow) * textHeightPixelSize));
     		}
+    		context.font = "10px Arial";
     		context.fillStyle = "black";
-    		context.fillText(fileData[i][0], 0, (i-startRow + 1) * textHeightPixelSize);
+    		context.fillText(fileData[i][0], 0, (i-startRow + 0.8) * textHeightPixelSize);
   			//context.font = "bold 10px Arial";
         }
     }
