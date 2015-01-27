@@ -1,0 +1,79 @@
+{
+  "name": "biojs-vis-rnasequences",
+  "description": "Pretty visualization for RNA sequences",
+  "version": "0.1.1",
+  "homepage": "https://github.com/dianapapyan/biojs-vis-rnasequences",
+  "contributors": [
+    {
+      "name": "Diana Papyan",
+      "email": "diana.papyan@gmail.com"
+    },
+    {
+      "name": "Matheus Raszl",
+      "email": "mthnrl@gmail.com"
+    },
+    {
+      "name": "Tatyana Goldberg"
+    },
+    {
+      "name": "Juan Miguel Cejuela"
+    },
+    {
+      "name": "Sebastian Wilzbach"
+    },
+    {
+      "name": "David Dao"
+    },
+    {
+      "name": "Prof. Dr. Burkhard Rost"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dianapapyan/biojs-vis-rnasequences.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dianapapyan/biojs-vis-rnasequences/issues"
+  },
+  "licenses": [
+    {
+      "type": "Apache 2",
+      "url": "https://github.com/dianapapyan/biojs-vis-rnasequences/blob/master/LICENSE"
+    }
+  ],
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha",
+    "build": "mkdirp build && browserify -r ./:biojs-vis-rnasequences -o build/rnasequences.js",
+    "build-browser": "npm run build",
+    "prepublish": "npm run build",
+    "watch": "watchify -r ./:biojs-vis-rnasequences -v -o build/rnasequences.js",
+    "sniper": "biojs-sniper ."
+  },
+  "dependencies": {
+    "jquery": "^2.1.3"
+  },
+  "devDependencies": {
+    "mkdirp": "^0.5.0",
+    "browserify": "6.x",
+    "biojs-sniper": "0.x",
+    "watchify": "^1.0.6",
+    "chai": "1.x",
+    "mocha": "1.x"
+  },
+  "sniper": {
+    "js": [
+      "/build/rnasequences.js", "/lib/canvasjs.min.js"
+    ],
+    "css": [
+      "/stylesheets/style.css"
+    ],
+    "snippets": [
+      "examples"
+    ],
+    "first": "simple"
+  },
+  "keywords": [
+    "biojs"
+  ]
+}

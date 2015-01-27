@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<body>
+	<div class = 'bordered' style= "display: block; float: none;">
+		<input type="file" id="fileinput"/>
+        <input type='button' id='btnLoad' value='Load'>
+	</div>
+	<div class = 'content'>
+		<div id='leftWrapper' class = 'bordered'>
+	    	<div class="original container" id = "originalContainer">
+	        	<div class="zoomRegion" id = "firstZoomRect"></div>
+	        	<!--canvas height="560" width="51" id="wholeHeatmap" ></canvas-->
+	        	<canvas height="700" id="wholeHeatmap"></canvas>
+	    	</div>
+	    	<!--
+	    	<div class="firstZoom container" >
+	        	<canvas height="1525" width="105" id="firstZoomedHeatmap"></canvas>
+	    	</div>
+	    	-->
+	    	<div class="firstZoom container" id = "firstZoomContainer" >
+	        	<div class="twice zoomRegion" id = "secondZoomRect"></div>
+	        	<canvas height="700" id="firstZoomedHeatmap"></canvas>
+	    	</div>
+	    	<div class="secondZoom container" id = "secondZoomContainer">
+	        	<canvas height="700" id="secondZoomedHeatmap"></canvas>
+	    	</div>
+	    	<div class="text container" id="textContainer">
+	    		<canvas height = "700" width = "100" id="textCanvas"></canvas>
+	    	</div>
+	    </div>
+	    <div id = "rightWrapper">
+	    	<div class="chart" id = "chartContainer">
+	    	</div>
+	    </div>
+	</div>
+</body>
+
